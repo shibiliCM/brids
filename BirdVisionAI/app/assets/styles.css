@@ -1,0 +1,548 @@
+/* ═══════════════════════════════════════════════════════════════
+   BirdVision AI — Global Stylesheet
+   Author: BirdVision AI Team
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Google Fonts ─────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap');
+
+/* ── Base ─────────────────────────────────────────────────────── */
+html,
+body,
+[class*="css"] {
+    font-family: 'DM Sans', sans-serif;
+}
+
+/* ── App background ───────────────────────────────────────────── */
+.stApp {
+    background: #0b0f07;
+}
+
+/* ── Sidebar ──────────────────────────────────────────────────── */
+section[data-testid="stSidebar"] {
+    background: #111808 !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* ── Header chrome ────────────────────────────────────────────── */
+header[data-testid="stHeader"] {
+    background: transparent !important;
+}
+
+#MainMenu,
+footer {
+    visibility: hidden;
+}
+
+/* ── Headings ─────────────────────────────────────────────────── */
+h1 {
+    font-family: 'Syne', sans-serif !important;
+    font-size: 2rem !important;
+    font-weight: 800 !important;
+    color: #c8d8a0 !important;
+    letter-spacing: -0.02em;
+}
+
+/* ── File uploader ────────────────────────────────────────────── */
+[data-testid="stFileUploader"] {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1.5px dashed rgba(122, 173, 56, 0.25);
+    border-radius: 18px;
+    padding: 1.2rem;
+    transition: border-color 0.2s;
+}
+
+[data-testid="stFileUploader"]:hover {
+    border-color: rgba(122, 173, 56, 0.5);
+}
+
+/* ── Primary button ───────────────────────────────────────────── */
+.stButton > button {
+    background: linear-gradient(135deg, #4a7a1c, #7aad38) !important;
+    color: #0b0f07 !important;
+    font-weight: 600 !important;
+    font-family: 'DM Sans', sans-serif !important;
+    border: none !important;
+    border-radius: 10px !important;
+    padding: 0.5rem 1.5rem !important;
+    transition: opacity 0.15s !important;
+}
+
+.stButton > button:hover {
+    opacity: 0.85 !important;
+}
+
+/* ── Selectbox ────────────────────────────────────────────────── */
+div[data-baseweb="select"] > div {
+    background: #1a2410 !important;
+    border: 1px solid rgba(122, 173, 56, 0.2) !important;
+    border-radius: 10px !important;
+    color: #c8d8a0 !important;
+}
+
+/* ── Slider ───────────────────────────────────────────────────── */
+[data-testid="stSlider"] > div > div > div {
+    background: linear-gradient(90deg, #4a7a1c, #7aad38) !important;
+}
+
+[data-testid="stSlider"] span {
+    color: #7aad38 !important;
+    font-weight: 500 !important;
+}
+
+/* ── Image ────────────────────────────────────────────────────── */
+[data-testid="stImage"] img {
+    border-radius: 16px;
+    border: 1px solid rgba(122, 173, 56, 0.15);
+}
+
+/* ── Prediction — best match card ────────────────────────────── */
+.pred-top {
+    background: linear-gradient(135deg,
+        rgba(122, 173, 56, 0.1),
+        rgba(74, 122, 28, 0.08));
+    border: 1px solid rgba(122, 173, 56, 0.25);
+    border-radius: 16px;
+    padding: 1.3rem 1.5rem;
+    margin-bottom: 10px;
+}
+
+.pred-label {
+    font-size: 10px;
+    color: #7aad38;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+
+.pred-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: #c8d8a0;
+    line-height: 1.2;
+}
+
+.pred-conf {
+    font-family: 'Syne', sans-serif;
+    font-size: 34px;
+    font-weight: 800;
+    color: #a8e060;
+    margin-top: 10px;
+    line-height: 1;
+}
+
+.pred-conf-unit {
+    font-size: 16px;
+    font-weight: 400;
+    color: #5a8030;
+}
+
+.pred-bar-track {
+    height: 5px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 99px;
+    margin-top: 14px;
+}
+
+/* ── Prediction — rank rows ───────────────────────────────────── */
+.pred-row {
+    background: #161f0a;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin-bottom: 8px;
+    transition: border-color 0.15s;
+}
+
+.pred-row:hover {
+    border-color: rgba(122, 173, 56, 0.3);
+}
+
+/* ── Status dot ───────────────────────────────────────────────── */
+.status-dot {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: #4a5a28;
+}
+
+.status-dot span {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #7aad38;
+    box-shadow: 0 0 6px #7aad38;
+    flex-shrink: 0;
+    display: inline-block;
+}
+
+/* ── Divider / Alert ──────────────────────────────────────────── */
+hr {
+    border-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+[data-testid="stAlert"] {
+    background: #161f0a !important;
+    border: 1px solid rgba(122, 173, 56, 0.2) !important;
+    border-radius: 10px !important;
+    color: #c8d8a0 !important;
+}
+
+/* ── Analytics — metric cards ─────────────────────────────────── */
+.metric-card {
+    background: #161f0a;
+    border: 1px solid rgba(122, 173, 56, 0.15);
+    border-radius: 14px;
+    padding: 1rem 1.2rem;
+    text-align: center;
+}
+
+.metric-val {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    color: #a8e060;
+}
+
+.metric-lbl {
+    font-size: 11px;
+    color: #4a5a28;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-top: 4px;
+}
+
+/* ── History — rows ───────────────────────────────────────────── */
+.hist-row {
+    background: #161f0a;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.hist-name { font-size: 14px; font-weight: 500; color: #c8d8a0; }
+.hist-conf { font-size: 13px; color: #7aad38; font-weight: 600; }
+.hist-time { font-size: 11px; color: #4a5238; }
+
+/* ── Sidebar Navigation (radio → nav items) ───────────────────── */
+div[data-testid="stRadio"] > label {
+    display: none !important;
+}
+
+div[data-testid="stRadio"] > div {
+    gap: 3px !important;
+    flex-direction: column !important;
+}
+
+div[data-testid="stRadio"] label {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    padding: 9px 12px !important;
+    border-radius: 10px !important;
+    cursor: pointer !important;
+    transition: all 0.15s !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    color: #8a9870 !important;
+    border: 1px solid transparent !important;
+    background: transparent !important;
+    width: 100% !important;
+    margin-bottom: 2px !important;
+}
+
+div[data-testid="stRadio"] label:hover {
+    background: rgba(122, 173, 56, 0.08) !important;
+    color: #c8d8a0 !important;
+}
+
+/* Active nav item */
+div[data-testid="stRadio"] label:has(input:checked) {
+    background: rgba(122, 173, 56, 0.13) !important;
+    border-color: rgba(122, 173, 56, 0.2) !important;
+    color: #c8d8a0 !important;
+    font-weight: 600 !important;
+}
+
+/* Hide radio circle */
+div[data-testid="stRadio"] label > div:first-child {
+    display: none !important;
+}
+
+/* ── Section labels (reusable utility class) ──────────────────── */
+.section-label {
+    font-size: 10px;
+    color: #4a5238;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+
+/* ── OOD — Unknown Bird card ──────────────────────────────────── */
+.ood-card {
+    background: linear-gradient(135deg,
+        rgba(200, 100, 30, 0.12),
+        rgba(160, 70, 10, 0.08));
+    border: 1px solid rgba(220, 120, 40, 0.35);
+    border-radius: 16px;
+    padding: 1.4rem 1.6rem;
+    margin-bottom: 14px;
+    animation: ood-pulse 2.5s ease-in-out infinite;
+}
+
+@keyframes ood-pulse {
+    0%, 100% { border-color: rgba(220, 120, 40, 0.35); }
+    50%       { border-color: rgba(220, 120, 40, 0.65); }
+}
+
+.ood-badge {
+    display: inline-block;
+    background: rgba(220, 120, 40, 0.18);
+    border: 1px solid rgba(220, 120, 40, 0.4);
+    border-radius: 99px;
+    padding: 3px 12px;
+    font-size: 10px;
+    font-weight: 700;
+    color: #e8a060;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+
+.ood-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    color: #e8c090;
+    line-height: 1.2;
+    margin-bottom: 8px;
+}
+
+.ood-conf {
+    font-family: 'Syne', sans-serif;
+    font-size: 34px;
+    font-weight: 800;
+    color: #e8a060;
+    line-height: 1;
+}
+
+.ood-conf-unit {
+    font-size: 16px;
+    font-weight: 400;
+    color: #a06030;
+}
+
+.ood-explanation {
+    margin-top: 14px;
+    padding: 10px 14px;
+    background: rgba(0, 0, 0, 0.2);
+    border-left: 3px solid rgba(220, 120, 40, 0.5);
+    border-radius: 0 8px 8px 0;
+    font-size: 12px;
+    color: #8a6040;
+    line-height: 1.6;
+}
+
+/* ── OOD — Debug rows (Top-5 candidates) ─────────────────────── */
+.ood-debug-section {
+    margin-top: 10px;
+}
+
+.ood-debug-row {
+    background: #120e08;
+    border: 1px solid rgba(220, 120, 40, 0.12);
+    border-radius: 10px;
+    padding: 9px 13px;
+    margin-bottom: 7px;
+    transition: border-color 0.15s;
+}
+
+.ood-debug-row:hover {
+    border-color: rgba(220, 120, 40, 0.28);
+}
+
+/* History badge for unknown birds */
+.hist-ood { color: #e8a060 !important; }
+
+/* ── Species Information Card ─────────────────────────────────── */
+.species-card {
+    background: linear-gradient(135deg, rgba(30,50,15,0.6), rgba(15,25,8,0.8));
+    border: 1px solid rgba(122, 173, 56, 0.2);
+    border-radius: 16px;
+    padding: 1.4rem 1.6rem;
+    margin-top: 8px;
+}
+
+.species-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: #c8d8a0;
+    line-height: 1.2;
+    margin-bottom: 4px;
+}
+
+.species-sci {
+    font-size: 13px;
+    color: #5a7a38;
+    font-style: italic;
+    margin-bottom: 14px;
+}
+
+.species-badge-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.species-badge {
+    display: inline-block;
+    border: 1px solid;
+    border-radius: 99px;
+    padding: 3px 11px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+}
+
+.species-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.species-field {
+    background: rgba(0,0,0,0.2);
+    border-radius: 10px;
+    padding: 10px 12px;
+}
+
+.species-field-lbl {
+    font-size: 10px;
+    color: #4a5238;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+    font-weight: 600;
+}
+
+.species-field-val {
+    font-size: 12px;
+    color: #a8b880;
+    line-height: 1.4;
+}
+
+.species-desc {
+    font-size: 12px;
+    color: #6a7a50;
+    line-height: 1.65;
+    padding: 10px 14px;
+    background: rgba(0,0,0,0.15);
+    border-left: 3px solid rgba(122,173,56,0.3);
+    border-radius: 0 8px 8px 0;
+}
+
+.species-no-data {
+    font-size: 13px;
+    color: #4a5238;
+    margin-top: 8px;
+    font-style: italic;
+}
+
+/* ── Grad-CAM Section ─────────────────────────────────────────── */
+.gradcam-section {
+    background: rgba(15, 25, 8, 0.6);
+    border: 1px solid rgba(122, 173, 56, 0.12);
+    border-radius: 16px;
+    padding: 1.2rem 1.4rem;
+    margin-top: 12px;
+}
+
+.gradcam-label {
+    font-size: 10px;
+    color: #7aad38;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.gradcam-caption {
+    font-size: 11px;
+    color: #4a5238;
+    margin-top: 6px;
+    text-align: center;
+}
+
+/* ── CLIP Fallback Card ───────────────────────────────────────── */
+.clip-card {
+    background: linear-gradient(135deg, rgba(30,50,80,0.25), rgba(10,20,40,0.2));
+    border: 1px solid rgba(80,160,220,0.25);
+    border-radius: 16px;
+    padding: 1.3rem 1.5rem;
+    margin-top: 14px;
+}
+
+.clip-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.clip-badge {
+    display: inline-block;
+    background: rgba(80,160,220,0.12);
+    border: 1px solid rgba(80,160,220,0.3);
+    border-radius: 99px;
+    padding: 3px 12px;
+    font-size: 10px;
+    font-weight: 700;
+    color: #60b0e0;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.clip-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: #a0c8e0;
+}
+
+.clip-row {
+    background: rgba(0,0,0,0.2);
+    border: 1px solid rgba(80,160,220,0.08);
+    border-radius: 10px;
+    padding: 9px 14px;
+    margin-bottom: 7px;
+    transition: border-color 0.15s;
+}
+
+.clip-row:hover { border-color: rgba(80,160,220,0.22); }
+
+.clip-unavailable {
+    font-size: 12px;
+    color: #4a5258;
+    font-style: italic;
+    padding: 8px 0;
+}
+
+/* ── Confidence Chart wrapper ─────────────────────────────────── */
+.chart-section {
+    background: rgba(15,25,8,0.5);
+    border: 1px solid rgba(122,173,56,0.1);
+    border-radius: 14px;
+    padding: 1rem 1.2rem;
+    margin-top: 10px;
+}
+

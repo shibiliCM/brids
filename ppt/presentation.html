@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BirdVisionAI Presentation</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Outfit:wght@300;400;600;800&family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #0d0f14;
+            --card-bg: rgba(22, 28, 45, 0.4);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --primary-accent: #00f2fe;
+            --secondary-accent: #4facfe;
+            --highlight-accent: #39ff14; /* Neon Bird Green */
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --font-display: 'Outfit', sans-serif;
+            --font-body: 'Plus Jakarta Sans', sans-serif;
+            --font-code: 'Fira Code', monospace;
+            --glow-primary: 0 0 25px rgba(0, 242, 254, 0.25);
+            --glow-neon: 0 0 20px rgba(57, 255, 20, 0.4);
+            --slide-transition-speed: 0.6s;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        /* Ambient background glow */
+        .ambient-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .ambient-circle-1 {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0, 242, 254, 0.1) 0%, rgba(0, 0, 0, 0) 70%);
+            top: -200px;
+            right: -100px;
+            animation: float 20s infinite alternate;
+        }
+
+        .ambient-circle-2 {
+            position: absolute;
+            width: 800px;
+            height: 800px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(79, 172, 254, 0.08) 0%, rgba(0, 0, 0, 0) 75%);
+            bottom: -300px;
+            left: -200px;
+            animation: float 25s infinite alternate-reverse;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(50px, 50px) scale(1.1); }
+        }
+
+        /* Presentation Container */
+        .presentation-container {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 2;
+            padding: 2rem;
+            height: calc(100vh - 80px);
+        }
+
+        .slide {
+            position: absolute;
+            width: 90%;
+            max-width: 1200px;
+            height: 85%;
+            max-height: 700px;
+            opacity: 0;
+            transform: translateX(100px) scale(0.95);
+            transition: opacity var(--slide-transition-speed) cubic-bezier(0.16, 1, 0.3, 1),
+                        transform var(--slide-transition-speed) cubic-bezier(0.16, 1, 0.3, 1);
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: translateX(0) scale(1);
+            pointer-events: all;
+        }
+
+        .slide.previous {
+            opacity: 0;
+            transform: translateX(-100px) scale(0.95);
+        }
+
+        /* Glassmorphism Slide Content Card */
+        .slide-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            padding: 3rem;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slide-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-accent), var(--secondary-accent));
+        }
+
+        /* Typography */
+        h1, h2, h3 {
+            font-family: var(--font-display);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            line-height: 1.1;
+            background: linear-gradient(135deg, #ffffff 30%, var(--primary-accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        h2 {
+            font-size: 2.2rem;
+            color: #ffffff;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        h2 span.highlight {
+            color: var(--primary-accent);
+            text-shadow: var(--glow-primary);
+        }
+
+        p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+        }
+
+        /* Grid Layouts */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2.5rem;
+            align-items: center;
+            height: 100%;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            height: 100%;
+        }
+
+        /* Interactive Folder Tree View */
+        .tree-container {
+            background: rgba(10, 12, 18, 0.6);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255,255,255,0.05);
+            font-family: var(--font-code);
+            font-size: 0.85rem;
+            line-height: 1.5;
+            color: #e2e8f0;
+            overflow-y: auto;
+            max-height: 400px;
+        }
+
+        .tree-node {
+            margin-left: 1.5rem;
+            position: relative;
+        }
+
+        .tree-node::before {
+            content: '';
+            position: absolute;
+            left: -10px;
+            top: 0;
+            bottom: 10px;
+            width: 1px;
+            background: rgba(255,255,255,0.15);
+        }
+
+        .tree-node::after {
+            content: '';
+            position: absolute;
+            left: -10px;
+            top: 10px;
+            width: 8px;
+            height: 1px;
+            background: rgba(255,255,255,0.15);
+        }
+
+        .tree-dir {
+            color: var(--primary-accent);
+            font-weight: 600;
+            cursor: pointer;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .tree-dir:hover {
+            color: #ffffff;
+        }
+
+        .tree-file {
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .tree-file.highlight-file {
+            color: var(--highlight-accent);
+            font-weight: 600;
+            text-shadow: var(--glow-neon);
+        }
+
+        /* Metric Dashboard Cards */
+        .metric-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.04);
+            border-color: var(--primary-accent);
+            box-shadow: var(--glow-primary);
+        }
+
+        .metric-value {
+            font-family: var(--font-display);
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--primary-accent);
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-value.neon {
+            color: var(--highlight-accent);
+            text-shadow: var(--glow-neon);
+        }
+
+        .metric-label {
+            font-size: 0.95rem;
+            color: var(--text-main);
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .metric-desc {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* Interactive Flow Steps */
+        .flow-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .flow-step {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.05);
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .flow-step.active {
+            background: rgba(0, 242, 254, 0.05);
+            border-color: var(--primary-accent);
+            transform: scale(1.02);
+        }
+
+        .flow-step-num {
+            background: linear-gradient(135deg, var(--primary-accent), var(--secondary-accent));
+            color: #0d0f14;
+            font-family: var(--font-display);
+            font-weight: 800;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .flow-step-content h4 {
+            font-family: var(--font-display);
+            font-size: 1.05rem;
+            color: #ffffff;
+            margin-bottom: 0.15rem;
+        }
+
+        .flow-step-content p {
+            font-size: 0.85rem;
+            margin: 0;
+        }
+
+        /* Slide Controls / Navigation */
+        .presentation-footer {
+            height: 80px;
+            background: rgba(10, 12, 18, 0.8);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid var(--card-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 3rem;
+            z-index: 10;
+        }
+
+        .footer-logo {
+            font-family: var(--font-display);
+            font-weight: 800;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #ffffff;
+        }
+
+        .footer-logo span {
+            color: var(--highlight-accent);
+        }
+
+        .controls-container {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .nav-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #ffffff;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            background: var(--primary-accent);
+            color: #0d0f14;
+            border-color: var(--primary-accent);
+            box-shadow: var(--glow-primary);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .slide-dots {
+            display: flex;
+            gap: 8px;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .dot.active {
+            background: var(--primary-accent);
+            width: 25px;
+            border-radius: 10px;
+            box-shadow: var(--glow-primary);
+        }
+
+        /* Progress Bar */
+        .progress-bar-container {
+            position: absolute;
+            bottom: 80px;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: rgba(255,255,255,0.05);
+            z-index: 10;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--primary-accent), var(--highlight-accent));
+            transition: width 0.3s ease;
+        }
+
+        /* Code Block Styling */
+        .code-container {
+            background: rgba(10, 12, 18, 0.7);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255,255,255,0.05);
+            font-family: var(--font-code);
+            font-size: 0.8rem;
+            color: #e2e8f0;
+            overflow-x: auto;
+            position: relative;
+        }
+
+        .code-lang {
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .keyword { color: #f43f5e; }
+        .function { color: #38bdf8; }
+        .string { color: #a3e635; }
+        .comment { color: #64748b; font-style: italic; }
+        .number { color: #fb923c; }
+
+        /* Custom Visual Flow diagram (Pipeline) */
+        .pipeline-vis {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            background: rgba(0,0,0,0.2);
+            padding: 2rem;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.03);
+            margin-top: 1rem;
+        }
+
+        .pipeline-box {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+            flex-grow: 1;
+            max-width: 160px;
+            transition: all 0.3s ease;
+        }
+
+        .pipeline-box.active {
+            border-color: var(--primary-accent);
+            background: rgba(0, 242, 254, 0.05);
+            box-shadow: var(--glow-primary);
+        }
+
+        .pipeline-box.neon-active {
+            border-color: var(--highlight-accent);
+            background: rgba(57, 255, 20, 0.05);
+            box-shadow: var(--glow-neon);
+        }
+
+        .pipeline-box h5 {
+            font-family: var(--font-display);
+            font-size: 0.9rem;
+            color: #ffffff;
+            margin-bottom: 0.25rem;
+        }
+
+        .pipeline-box span {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .pipeline-arrow {
+            color: rgba(255,255,255,0.2);
+            font-size: 1.5rem;
+            margin: 0 0.5rem;
+        }
+
+        .tag {
+            background: rgba(0, 242, 254, 0.1);
+            color: var(--primary-accent);
+            padding: 4px 10px;
+            border-radius: 99px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 0.75rem;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Ambient background animations -->
+    <div class="ambient-bg">
+        <div class="ambient-circle-1"></div>
+        <div class="ambient-circle-2"></div>
+    </div>
+
+    <!-- Presentation slides -->
+    <div class="presentation-container">
+
+        <!-- Slide 1: Welcome / Title -->
+        <div class="slide active" id="slide-0">
+            <div class="slide-card" style="align-items: center; justify-content: center; text-align: center;">
+                <div class="tag">DEEP LEARNING PROJECT</div>
+                <h1 style="font-size: 4.5rem; margin-bottom: 1.5rem;">BirdVisionAI</h1>
+                <p style="font-size: 1.4rem; max-width: 750px; margin-bottom: 2.5rem; color: #cbd5e1;">
+                    A highly modular, state-of-the-art Deep Learning framework for bird species classification using the CUB-200-2011 dataset.
+                </p>
+                <div style="display: flex; gap: 1rem; align-items: center;">
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 0.75rem 1.5rem; border-radius: 12px; font-family: var(--font-code); font-size: 0.9rem; color: var(--primary-accent);">
+                        PyTorch / ResNet-18
+                    </div>
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 0.75rem 1.5rem; border-radius: 12px; font-family: var(--font-code); font-size: 0.9rem; color: var(--highlight-accent);">
+                        Streamlit UI
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 2: Folder Structure -->
+        <div class="slide" id="slide-1">
+            <div class="slide-card">
+                <div class="grid-2">
+                    <div>
+                        <div class="tag">ARCHITECTURAL DESIGN</div>
+                        <h2>Modular <span class="highlight">Workspace</span></h2>
+                        <p>
+                            Transitioned from a monolithic script into a clean, professional, enterprise-ready Python package structure.
+                        </p>
+                        <p style="font-size: 0.95rem;">
+                            The code separation decouples user interface execution, model loading layers, predictions processing, and image pipeline conversions to achieve maximum maintainability.
+                        </p>
+                    </div>
+                    <div class="tree-container">
+                        <div>📁 BirdVisionAI/</div>
+                        <div class="tree-node">
+                            <span class="tree-dir">📁 app/</span>
+                            <div class="tree-node">
+                                <span class="tree-file highlight-file">📄 main.py</span>
+                                <span class="tree-dir">📁 config/</span>
+                                <div class="tree-node"><span class="tree-file">📄 settings.py</span></div>
+                                <span class="tree-dir">📁 models/</span>
+                                <div class="tree-node">
+                                    <span class="tree-file">📄 model_loader.py</span>
+                                    <span class="tree-file">📄 predictor.py</span>
+                                </div>
+                                <span class="tree-dir">📁 preprocessing/</span>
+                                <div class="tree-node"><span class="tree-file">📄 transforms.py</span></div>
+                                <span class="tree-dir">📁 ui/</span>
+                                <div class="tree-node">
+                                    <span class="tree-file">📄 sidebar.py</span>
+                                    <span class="tree-file">📄 upload.py</span>
+                                    <span class="tree-file">📄 results.py</span>
+                                </div>
+                            </div>
+                            <span class="tree-dir">📁 checkpoints/</span>
+                            <div class="tree-node"><span class="tree-file highlight-file">📄 cub_resnet18.pth</span></div>
+                            <span class="tree-dir">📁 data/</span>
+                            <div class="tree-node"><span class="tree-file">📄 classes.txt</span></div>
+                            <span class="tree-dir">📁 tests/</span>
+                            <div class="tree-node">
+                                <span class="tree-file">📄 test_model.py</span>
+                                <span class="tree-file">📄 test_preprocessing.py</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Model Architecture -->
+        <div class="slide" id="slide-2">
+            <div class="slide-card">
+                <div class="grid-2">
+                    <div class="code-container">
+                        <span class="code-lang">python</span>
+                        <span class="comment"># Loading ResNet-18 dynamically matching checkpoints</span>
+                        <span class="keyword">def</span> <span class="function">load_model</span>(model_path: Path):
+                            model = models.<span class="function">resnet18</span>(pretrained=<span class="keyword">False</span>)
+                            state_dict = torch.<span class="function">load</span>(model_path, map_location=<span class="string">'cpu'</span>)
+                            
+                            <span class="comment"># Auto-detect classification shape in checkpoint</span>
+                            <span class="keyword">if</span> <span class="string">"fc.weight"</span> <span class="keyword">in</span> state_dict:
+                                num_classes = state_dict[<span class="string">"fc.weight"</span>].shape[<span class="number">0</span>]
+                                model.fc = nn.<span class="function">Linear</span>(model.fc.in_features, num_classes)
+                                
+                            model.<span class="function">load_state_dict</span>(state_dict, strict=<span class="keyword">True</span>)
+                            model.<span class="function">eval</span>()
+                            <span class="keyword">return</span> model
+                    </div>
+                    <div>
+                        <div class="tag">MODEL PIPELINE</div>
+                        <h2>Dynamic <span class="highlight">Checkpoint Loading</span></h2>
+                        <p>
+                            During training, the model saved standard ResNet-18 with 1,000 logits instead of truncating to 200, which silently broke the custom model loader.
+                        </p>
+                        <p style="font-size: 0.95rem;">
+                            Our custom loader inspects the saved state dictionary dynamically, sets up the linear layer dimension to exactly match the checkpoint shape (`1000`), and runs strict state dict loading to avoid discarding trained weights.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: The Predict Function -->
+        <div class="slide" id="slide-3">
+            <div class="slide-card">
+                <div class="grid-2">
+                    <div>
+                        <div class="tag">CODE IMPLEMENTATION</div>
+                        <h2>The <span class="highlight">Predict Function</span></h2>
+                        <p>
+                            The core inference function processes input images, runs forward propagation, and handles logit alignment.
+                        </p>
+                        <ul style="color: var(--text-muted); list-style-type: none; font-size: 0.95rem; display: flex; flex-direction: column; gap: 0.75rem;">
+                            <li>🔒 <strong>No Gradients:</strong> Wrapped in a <code>torch.no_grad()</code> block to optimize speed and RAM.</li>
+                            <li>✂️ <strong>Logit Slicing:</strong> Extracts the first 200 elements (<code>output[:, :200]</code>) to dynamically handle checkpoints saved with 1000 outputs.</li>
+                            <li>⚡ <strong>Top-K Sorting:</strong> Calculates Softmax, and runs <code>torch.topk</code> to select Top-5 index/probability pairs.</li>
+                        </ul>
+                    </div>
+                    <div class="code-container" style="max-height: 400px; overflow-y: auto;">
+                        <span class="code-lang">python</span>
+                        <span class="keyword">def</span> <span class="function">predict</span>(model, img_tensor, confidence_threshold=0.5):
+                            <span class="keyword">with</span> torch.<span class="function">no_grad</span>():
+                                output = <span class="function">model</span>(img_tensor)
+                                <span class="comment"># Slice output to matching 200 CUB classes</span>
+                                logits = output[:, :<span class="number">200</span>]
+                                probs = torch.<span class="function">softmax</span>(logits, dim=<span class="number">1</span>).<span class="function">squeeze</span>(<span class="number">0</span>)
+                            
+                            <span class="keyword">if</span> probs.dim() == <span class="number">0</span>:
+                                probs = probs.<span class="function">unsqueeze</span>(<span class="number">0</span>)
+                        
+                            <span class="comment"># Extract Top-5 predictions</span>
+                            k = <span class="function">min</span>(<span class="number">5</span>, <span class="function">len</span>(probs))
+                            topk = torch.<span class="function">topk</span>(probs, k)
+                        
+                            top_idx = topk.indices.<span class="function">tolist</span>()
+                            top_probs = topk.values.<span class="function">tolist</span>()
+                        
+                            <span class="keyword">return</span> <span class="function">list</span>(<span class="function">zip</span>(top_idx, top_probs))
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Inference Pipeline -->
+        <div class="slide" id="slide-4">
+            <div class="slide-card">
+                <div class="flow-container">
+                    <div class="tag">PREDICTION WORKFLOW</div>
+                    <h2 style="margin-bottom: 0.5rem;">Pipeline & <span class="highlight">Logit Slicing</span></h2>
+                    <p style="margin-bottom: 1.5rem; max-width: 800px;">
+                        The model is evaluated through a multi-stage workflow, slicing logits at the final stage to guarantee alignment with CUB classes.
+                    </p>
+                    
+                    <div class="grid-2" style="gap: 1.5rem;">
+                        <div class="flow-step active">
+                            <div class="flow-step-num">1</div>
+                            <div class="flow-step-content">
+                                <h4>Image Upload & Transformation</h4>
+                                <p>Resize (256x256) -> CenterCrop (224x224) -> Convert to Tensor -> Add Batch Dim.</p>
+                            </div>
+                        </div>
+                        <div class="flow-step">
+                            <div class="flow-step-num">2</div>
+                            <div class="flow-step-content">
+                                <h4>Forward Pass (Inference)</h4>
+                                <p>Evaluates the ResNet-18 layers under a `torch.no_grad()` block for high-speed predictions.</p>
+                            </div>
+                        </div>
+                        <div class="flow-step">
+                            <div class="flow-step-num">3</div>
+                            <div class="flow-step-content">
+                                <h4>Logits Slicing `[:, :200]`</h4>
+                                <p>Extracts only the first 200 classes to match `classes.txt` size, isolating CUB bird species classes.</p>
+                            </div>
+                        </div>
+                        <div class="flow-step">
+                            <div class="flow-step-num">4</div>
+                            <div class="flow-step-content">
+                                <h4>Softmax & Top-5 Selection</h4>
+                                <p>Computes probabilities across target classes and returns the Top-5 predictions.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Performance & Results -->
+        <div class="slide" id="slide-5">
+            <div class="slide-card">
+                <div class="tag">MODEL EVALUATION</div>
+                <h2 style="margin-bottom: 2rem;">Training & <span class="highlight">Metrics Dashboard</span></h2>
+                
+                <div class="grid-3" style="margin-bottom: 1.5rem;">
+                    <div class="metric-card">
+                        <div class="metric-value">53.69%</div>
+                        <div class="metric-label">Validation Accuracy (Top-1)</div>
+                        <div class="metric-desc">Strict target matching on validation set</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value neon">80.89%</div>
+                        <div class="metric-label">Validation Accuracy (Top-5)</div>
+                        <div class="metric-desc">Correct class falls inside Top-5 predicted</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">1.8667</div>
+                        <div class="metric-label">Final Validation Loss</div>
+                        <div class="metric-desc">Cross-Entropy Loss at Epoch 3</div>
+                    </div>
+                </div>
+                
+                <p style="text-align: center; font-size: 0.95rem;">
+                    Fine-tuned via standard Transfer Learning by unfreezing ResNet18 backbone Layer 3 & Layer 4 blocks, utilizing Adam optimizer (learning rate: 1e-4) over 3 epochs.
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 7: Explainable AI — Grad-CAM Heatmap -->
+        <div class="slide" id="slide-6">
+            <div class="slide-card">
+                <div class="grid-2">
+                    <div>
+                        <div class="tag">EXPLAINABLE AI</div>
+                        <h2>🔥 Show <span class="highlight">Grad-CAM Heatmap</span></h2>
+                        <p>
+                            Grad-CAM (Gradient-weighted Class Activation Mapping) makes black-box deep learning models transparent by illustrating visual attention.
+                        </p>
+                        <ul style="color: var(--text-muted); list-style-type: none; font-size: 0.9rem; display: flex; flex-direction: column; gap: 0.6rem;">
+                            <li>🎯 <strong>Target Layer:</strong> Attaches hooks to ResNet-18's last convolutional layer (<code>layer4[-1].conv2</code>).</li>
+                            <li>🧮 <strong>Gradient Pooling:</strong> Computes the gradient of the target class score with respect to feature maps, pool-averaging channel weights.</li>
+                            <li>🌈 <strong>Heatmap Overlay:</strong> Blends jet-colormap values with the original image to showcase the exact regions driving the classification.</li>
+                        </ul>
+                    </div>
+                    <div class="code-container" style="max-height: 400px; overflow-y: auto;">
+                        <span class="code-lang">python</span>
+                        <span class="keyword">def</span> <span class="function">generate_heatmap</span>(self, input_tensor, class_idx):
+                            self.model.<span class="function">eval</span>()
+                            self.model.<span class="function">zero_grad</span>()
+                            
+                            output = self.<span class="function">model</span>(input_tensor)
+                            score = output[<span class="number">0</span>, class_idx]
+                            score.<span class="function">backward</span>()
+                            
+                            weights = self._gradients.<span class="function">mean</span>(dim=[<span class="number">0</span>, <span class="number">2</span>, <span class="number">3</span>])
+                            acts = self._activations[<span class="number">0</span>]
+                            
+                            cam = (weights[:, <span class="keyword">None</span>, <span class="keyword">None</span>] * acts).<span class="function">sum</span>(dim=<span class="number">0</span>)
+                            cam = torch.<span class="function">relu</span>(cam).<span class="function">numpy</span>()
+                            <span class="keyword">return</span> (cam - cam.min()) / (cam.max() + <span class="number">1e-8</span>)
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: CLIP Fallback -->
+        <div class="slide" id="slide-7">
+            <div class="slide-card">
+                <div class="grid-2">
+                    <div class="code-container" style="max-height: 400px; overflow-y: auto;">
+                        <span class="code-lang">python</span>
+                        <span class="comment"># Zero-shot classification workflow</span>
+                        <span class="keyword">def</span> <span class="function">run_clip_fallback</span>(pil_image, top_k=<span class="number">5</span>):
+                            texts = [f<span class="string">"a photo of a {b}"</span> <span class="keyword">for</span> b <span class="keyword">in</span> BIRD_CANDIDATES]
+                            tokens = <span class="function">tokenizer</span>(texts)
+                            img_t = <span class="function">preprocess</span>(pil_image).<span class="function">unsqueeze</span>(<span class="number">0</span>)
+                            
+                            <span class="keyword">with</span> torch.<span class="function">no_grad</span>():
+                                img_f = model.<span class="function">encode_image</span>(img_t)
+                                txt_f = model.<span class="function">encode_text</span>(tokens)
+                                
+                                <span class="comment"># Compute similarity probabilities</span>
+                                sims = (<span class="number">100.0</span> * img_f @ txt_f.T).<span class="function">softmax</span>(dim=-<span class="number">1</span>)
+                            
+                            scores = sims[<span class="number">0</span>].<span class="function">tolist</span>()
+                            <span class="keyword">return</span> <span class="function">sorted</span>(<span class="function">zip</span>(BIRD_CANDIDATES, scores), ...
+                    </div>
+                    <div>
+                        <div class="tag">HYBRID RECOGNITION</div>
+                        <h2>🔍 Enable <span class="highlight">CLIP Fallback</span></h2>
+                        <p>
+                            Handles Out-of-Distribution (OOD) images using zero-shot learning to avoid misleading predictions.
+                        </p>
+                        <ul style="color: var(--text-muted); list-style-type: none; font-size: 0.9rem; display: flex; flex-direction: column; gap: 0.6rem;">
+                            <li>🛡️ <strong>OOD Protection:</strong> Activates when the ResNet-18 top-1 confidence falls below the configurable threshold (default: 70%).</li>
+                            <li>🧬 <strong>OpenCLIP ViT-B-32:</strong> Utilizes OpenAI's pretrained vision-language model to match the image features against text prompts.</li>
+                            <li>📋 <strong>Candidate List:</strong> Zero-shot parses the image against a list of common birds not found in CUB-200 (Crows, Pigeons, Parrots, Owls, etc.).</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Pros & Cons -->
+        <div class="slide" id="slide-8">
+            <div class="slide-card">
+                <div class="tag">TRADE-OFF ANALYSIS</div>
+                <h2 style="margin-bottom: 1.5rem;">System <span class="highlight">Pros & Cons</span></h2>
+                <div class="grid-2" style="align-items: start; gap: 2rem;">
+                    <div style="background: rgba(57, 255, 20, 0.02); border: 1px solid rgba(57, 255, 20, 0.1); padding: 1.5rem; border-radius: 16px;">
+                        <h4 style="color: var(--highlight-accent); margin-bottom: 1rem; font-family: var(--font-display); font-size: 1.2rem;">🟢 Pros & Advantages</h4>
+                        <ul style="color: var(--text-muted); list-style-type: none; font-size: 0.9rem; display: flex; flex-direction: column; gap: 0.75rem;">
+                            <li>✅ <strong>Enhanced Trust:</strong> Grad-CAM highlights key features (e.g. wings, beak) showing how predictions are reached.</li>
+                            <li>✅ <strong>Graceful Fallbacks:</strong> CLIP prevents embarrassing failures by correctly suggesting common species not in the CUB dataset.</li>
+                            <li>✅ <strong>Configurability:</strong> Real-time slider adjusting OOD threshold enables custom balance of accuracy vs. permissiveness.</li>
+                        </ul>
+                    </div>
+                    <div style="background: rgba(244, 63, 94, 0.02); border: 1px solid rgba(244, 63, 94, 0.1); padding: 1.5rem; border-radius: 16px;">
+                        <h4 style="color: #f43f5e; margin-bottom: 1rem; font-family: var(--font-display); font-size: 1.2rem;">🔴 Cons & Limitations</h4>
+                        <ul style="color: var(--text-muted); list-style-type: none; font-size: 0.9rem; display: flex; flex-direction: column; gap: 0.75rem;">
+                            <li>❌ <strong>Increased Footprint:</strong> Adding OpenCLIP model adds ~300MB RAM/VRAM load on first run initialization.</li>
+                            <li>❌ <strong>Inference Latency:</strong> Dual-model architecture adds small latency when OOD activates and triggers fallback inference.</li>
+                            <li>❌ <strong>MSP Heuristics:</strong> Maximum Softmax Probability is a basic baseline; can sometimes yield false confidence in OOD images.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Questions & Answers -->
+        <div class="slide" id="slide-9">
+            <div class="slide-card" style="justify-content: start; overflow-y: auto;">
+                <div class="tag">FAQ SECTION</div>
+                <h2 style="margin-bottom: 1.5rem;">Questions & <span class="highlight">Answers</span></h2>
+                <div style="display: flex; flex-direction: column; gap: 1rem; max-height: 480px; overflow-y: auto; padding-right: 10px;">
+                    <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 1rem 1.25rem; border-radius: 12px;">
+                        <h5 style="color: var(--primary-accent); font-family: var(--font-display); font-size: 1rem; margin-bottom: 0.25rem;">Q: Why is ResNet-18 chosen over larger models like ViT or ConvNeXt?</h5>
+                        <p style="font-size: 0.85rem; margin: 0; color: var(--text-muted);">
+                            ResNet-18 provides the optimal balance between accuracy and computational cost for local deployment on standard CPU containers, while still supporting real-time Grad-CAM calculation without delay.
+                        </p>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 1rem 1.25rem; border-radius: 12px;">
+                        <h5 style="color: var(--primary-accent); font-family: var(--font-display); font-size: 1rem; margin-bottom: 0.25rem;">Q: How does Maximum Softmax Probability (MSP) detect out-of-distribution birds?</h5>
+                        <p style="font-size: 0.85rem; margin: 0; color: var(--text-muted);">
+                            A classifier trained only on CUB-200 species spreads its probability density broadly across classes when fed an unknown bird. Since no single class scores highly, the maximum softmax probability remains low, triggering OOD detection.
+                        </p>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 1rem 1.25rem; border-radius: 12px;">
+                        <h5 style="color: var(--primary-accent); font-family: var(--font-display); font-size: 1rem; margin-bottom: 0.25rem;">Q: Can the OOD threshold slider be auto-calibrated?</h5>
+                        <p style="font-size: 0.85rem; margin: 0; color: var(--text-muted);">
+                            Yes. Using temperature scaling (calibration) on a held-out validation set of combined CUB and non-CUB images, we can mathematically calculate the threshold that maximizes the F1-score of OOD classification.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Progress Indicator Bar -->
+    <div class="progress-bar-container">
+        <div class="progress-bar" id="progress-indicator"></div>
+    </div>
+
+    <!-- Presentation footer controls -->
+    <div class="presentation-footer">
+        <div class="footer-logo">
+            🐦 <span>BirdVisionAI</span>
+        </div>
+        
+        <div class="controls-container">
+            <div class="slide-dots" id="slide-dots">
+                <!-- Dots generated by JS -->
+            </div>
+            
+            <div style="display: flex; gap: 0.5rem;">
+                <button class="nav-btn" id="prev-btn" aria-label="Previous Slide">
+                    &larr;
+                </button>
+                <button class="nav-btn" id="next-btn" aria-label="Next Slide">
+                    &rarr;
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const dotsContainer = document.getElementById('slide-dots');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const progressIndicator = document.getElementById('progress-indicator');
+        
+        let currentSlideIdx = 0;
+
+        // Initialize dots
+        slides.forEach((_, idx) => {
+            const dot = document.createElement('div');
+            dot.classList.add('dot');
+            if (idx === 0) dot.classList.add('active');
+            dot.addEventListener('click', () => goToSlide(idx));
+            dotsContainer.appendChild(dot);
+        });
+
+        const dots = document.querySelectorAll('.dot');
+
+        function updateControls() {
+            prevBtn.disabled = currentSlideIdx === 0;
+            nextBtn.disabled = currentSlideIdx === slides.length - 1;
+            
+            // Update dots
+            dots.forEach((dot, idx) => {
+                dot.classList.toggle('active', idx === currentSlideIdx);
+            });
+
+            // Update progress bar
+            const progress = (currentSlideIdx / (slides.length - 1)) * 100;
+            progressIndicator.style.width = `${progress}%`;
+        }
+
+        function goToSlide(idx) {
+            if (idx < 0 || idx >= slides.length) return;
+            
+            slides.forEach((slide, sIdx) => {
+                slide.classList.remove('active', 'previous');
+                if (sIdx === idx) {
+                    slide.classList.add('active');
+                } else if (sIdx < idx) {
+                    slide.classList.add('previous');
+                }
+            });
+
+            currentSlideIdx = idx;
+            updateControls();
+        }
+
+        prevBtn.addEventListener('click', () => {
+            if (currentSlideIdx > 0) goToSlide(currentSlideIdx - 1);
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (currentSlideIdx < slides.length - 1) goToSlide(currentSlideIdx + 1);
+        });
+
+        // Keypress navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter') {
+                if (currentSlideIdx < slides.length - 1) goToSlide(currentSlideIdx + 1);
+            } else if (e.key === 'ArrowLeft' || e.key === 'Backspace') {
+                if (currentSlideIdx > 0) goToSlide(currentSlideIdx - 1);
+            }
+        });
+
+        // Flow step micro-animation interval
+        let currentFlowStep = 0;
+        setInterval(() => {
+            const flowSteps = document.querySelectorAll('.flow-step');
+            if (flowSteps.length > 0) {
+                flowSteps.forEach((step, idx) => {
+                    step.classList.toggle('active', idx === currentFlowStep);
+                });
+                currentFlowStep = (currentFlowStep + 1) % flowSteps.length;
+            }
+        }, 3000);
+
+        // Initial setup
+        updateControls();
+    </script>
+</body>
+</html>
