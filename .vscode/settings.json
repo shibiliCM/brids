@@ -1,0 +1,20 @@
+{
+  "python.defaultInterpreterPath": "c:/DS/projects/brids/BirdVisionAI/.venv/Scripts/python.exe",
+  "python.analysis.extraPaths": [
+    "c:/DS/projects/brids/BirdVisionAI",
+    "c:/DS/projects/brids/BirdVisionAI/.venv/Lib/site-packages"
+  ],
+  "python.autoComplete.extraPaths": [
+    "c:/DS/projects/brids/BirdVisionAI",
+    "c:/DS/projects/brids/BirdVisionAI/.venv/Lib/site-packages"
+  ],
+  "python.analysis.typeCheckingMode": "off",
+  "python.analysis.diagnosticSeverityOverrides": {
+    "reportMissingImports": "none",
+    "reportUndefinedVariable": "none",
+    "reportGeneralTypeIssues": "none",
+    "reportOptionalMemberAccess": "none"
+  },
+  "python.pyrefly.typeCheckingMode": "off",
+  "python.pyrefly.disableTypeErrors": true
+}

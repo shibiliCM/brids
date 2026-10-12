@@ -125,18 +125,110 @@ div[data-baseweb="select"] > div {
 }
 
 .pred-conf {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
     font-family: 'Syne', sans-serif;
-    font-size: 34px;
+    font-size: 32px;
     font-weight: 800;
     color: #a8e060;
     margin-top: 10px;
-    line-height: 1;
+    line-height: 1.2;
 }
 
 .pred-conf-unit {
-    font-size: 16px;
-    font-weight: 400;
-    color: #5a8030;
+    font-size: 15px;
+    font-weight: 500;
+    color: #7aad38;
+}
+
+/* ── Out-of-Distribution (OOD) Card ────────────────────────── */
+.ood-card {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(180, 83, 9, 0.08));
+    border: 1px solid rgba(245, 158, 11, 0.35);
+    border-radius: 16px;
+    padding: 1.3rem 1.5rem;
+    margin-bottom: 12px;
+}
+
+.ood-card-override {
+    background: linear-gradient(135deg, rgba(14, 165, 233, 0.14), rgba(3, 105, 161, 0.08));
+    border: 1px solid rgba(56, 189, 248, 0.4);
+}
+
+.ood-badge {
+    display: inline-block;
+    background: rgba(245, 158, 11, 0.15);
+    border: 1px solid rgba(245, 158, 11, 0.4);
+    border-radius: 99px;
+    padding: 3px 12px;
+    font-size: 10px;
+    font-weight: 700;
+    color: #fbbf24;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.ood-card-override .ood-badge {
+    background: rgba(14, 165, 233, 0.15);
+    border: 1px solid rgba(56, 189, 248, 0.4);
+    color: #38bdf8;
+}
+
+.ood-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: #fef3c7;
+    line-height: 1.2;
+}
+
+.ood-card-override .ood-title {
+    color: #e0f2fe;
+}
+
+.ood-conf {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    font-family: 'Syne', sans-serif;
+    font-size: 32px;
+    font-weight: 800;
+    color: #fbbf24;
+    margin-top: 10px;
+    line-height: 1.2;
+}
+
+.ood-card-override .ood-conf {
+    color: #38bdf8;
+}
+
+.ood-conf-unit {
+    font-size: 15px;
+    font-weight: 500;
+    color: #d97706;
+}
+
+.ood-card-override .ood-conf-unit {
+    color: #0284c7;
+}
+
+.ood-explanation {
+    font-size: 13px;
+    line-height: 1.55;
+    color: #d1d5db;
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.ood-debug-row {
+    background: #14180e;
+    border: 1px solid rgba(245, 158, 11, 0.12);
+    border-radius: 10px;
+    padding: 9px 14px;
+    margin-bottom: 7px;
 }
 
 .pred-bar-track {
@@ -545,4 +637,26 @@ div[data-testid="stRadio"] label > div:first-child {
     padding: 1rem 1.2rem;
     margin-top: 10px;
 }
+
+/* ── Download Buttons & Action Bar ────────────────────────────── */
+.stDownloadButton > button {
+    background: linear-gradient(135deg, rgba(122, 173, 56, 0.25), rgba(74, 114, 30, 0.4)) !important;
+    border: 1px solid rgba(168, 224, 96, 0.4) !important;
+    border-radius: 12px !important;
+    color: #e2f0d9 !important;
+    font-weight: 600 !important;
+    font-size: 13px !important;
+    padding: 0.6rem 1.2rem !important;
+    transition: all 0.2s ease-in-out !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25) !important;
+}
+
+.stDownloadButton > button:hover {
+    background: linear-gradient(135deg, rgba(168, 224, 96, 0.35), rgba(122, 173, 56, 0.5)) !important;
+    border-color: #a8e060 !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 20px rgba(122, 173, 56, 0.3) !important;
+    color: #ffffff !important;
+}
+
 

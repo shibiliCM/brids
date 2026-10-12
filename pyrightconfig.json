@@ -1,0 +1,17 @@
+{
+  "include": [
+    "BirdVisionAI"
+  ],
+  "venvPath": "c:/DS/projects/brids/BirdVisionAI",
+  "venv": ".venv",
+  "extraPaths": [
+    "c:/DS/projects/brids/BirdVisionAI",
+    "c:/DS/projects/brids/BirdVisionAI/.venv/Lib/site-packages"
+  ],
+  "typeCheckingMode": "off",
+  "reportMissingImports": "none",
+  "reportUndefinedVariable": "none",
+  "reportGeneralTypeIssues": "none",
+  "reportOptionalMemberAccess": "none",
+  "reportOptionalSubscript": "none"
+}

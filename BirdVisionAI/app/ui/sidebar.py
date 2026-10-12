@@ -56,7 +56,7 @@ def render_sidebar() -> None:
     current_index = nav_keys.index(st.session_state["current_page"])
 
     selected_label = st.sidebar.radio(
-        "",
+        "Navigation",
         options=nav_labels,
         index=current_index,
         key="_nav_radio",

@@ -13,8 +13,8 @@ def load_model(model_path: Path):
     """
     if not model_path.exists():
         raise FileNotFoundError(f"Model file not found: {model_path}")
-    model = models.resnet18(pretrained=False)
-    state_dict = torch.load(model_path, map_location=torch.device('cpu'))
+    model = models.resnet18(weights=None)
+    state_dict = torch.load(model_path, map_location=torch.device('cpu'), weights_only=True)
     
     # Dynamically adjust model.fc to match checkpoint shapes
     if "fc.weight" in state_dict:

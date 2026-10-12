@@ -5,8 +5,8 @@ Responsibilities:
   - Page configuration & CSS injection
   - Session-state bootstrap
   - Sidebar rendering & page routing
-  - Inference pipeline: ResNet-18 → OOD → CLIP fallback
-  - Explainability: Grad-CAM heatmap
+  - Hybrid inference pipeline: ResNet-18 → Foundation Model Verification → OOD → CLIP fallback
+  - Explainability: Grad-CAM attention heatmap
   - Visualisation: Confidence chart, Species info panel
 """
 import datetime
@@ -55,7 +55,7 @@ from models.model_loader      import load_model
 from models.predictor         import predict
 from models.ood_detector      import detect_ood
 from models.gradcam           import get_gradcam, GradCAM
-from models.clip_fallback     import run_clip_fallback
+from models.clip_fallback     import run_clip_fallback, verify_with_clip
 from utils.class_loader       import load_class_names
 from preprocessing.transforms import get_transform
 from utils.logger             import get_logger
@@ -65,6 +65,7 @@ from ui.upload            import upload_image
 from ui.results           import display_results
 from ui.confidence_chart  import render_confidence_chart
 from ui.species_info      import render_species_info
+from ui.report            import generate_field_report
 from ui.templates import (
     page_header,
     section_label,
@@ -73,6 +74,7 @@ from ui.templates import (
     metric_card,
     history_row,
     ood_card,
+    ood_override_card,
     ood_debug_header,
     ood_debug_row,
     clip_card_header,
@@ -171,12 +173,19 @@ if page == "classify":
                 img_tensor = transform(uploaded).unsqueeze(0)
                 raw_preds  = predict(model, img_tensor, conf_filter)
 
+            # ── Foundation Model Cross-Verification ───────────────────────
+            clip_verification = None
+            if clip_on and raw_preds:
+                top_pred_name = _fmt(class_names[raw_preds[0][0]])
+                clip_verification = verify_with_clip(uploaded, top_pred_name, top_k=CLIP_TOP_K)
+
             # ── OOD detection ─────────────────────────────────────────────
             ood_result = detect_ood(
                 raw_predictions=raw_preds,
                 class_names=class_names,
                 ood_threshold=ood_threshold,
                 name_formatter=_fmt,
+                clip_verification=clip_verification,
             )
 
             st.markdown(section_label("Prediction Result"), unsafe_allow_html=True)
@@ -203,56 +212,101 @@ if page == "classify":
                 else:
                     st.markdown(no_predictions_notice(), unsafe_allow_html=True)
 
-            # ── OOD (Unknown) branch ──────────────────────────────────────
+            # ── OOD (Unknown species / Consensus override) branch ─────────
             else:
-                st.markdown(
-                    ood_card(ood_result.top_confidence, ood_result.threshold_pct),
-                    unsafe_allow_html=True,
-                )
+                # 1. Foundation Model Override (e.g. Peacock identified)
+                if ood_result.clip_override_name:
+                    st.markdown(
+                        ood_override_card(
+                            identified_name=ood_result.clip_override_name,
+                            clip_conf=ood_result.clip_confidence or ood_result.top_confidence,
+                            resnet_name=ood_result.top5[0][0] if ood_result.top5 else "CUB Class",
+                            resnet_conf=ood_result.top_confidence,
+                        ),
+                        unsafe_allow_html=True,
+                    )
 
-                # Top-5 debug rows
-                if ood_result.top5:
-                    st.markdown(ood_debug_header(), unsafe_allow_html=True)
-                    top_pct = ood_result.top5[0][1]
-                    for rank, (name, pct) in enumerate(ood_result.top5, start=1):
-                        bar_w = min(pct / top_pct * 100, 100) if top_pct > 0 else 0
-                        st.markdown(
-                            ood_debug_row(rank, name, pct, bar_w),
-                            unsafe_allow_html=True,
-                        )
-
-                # CLIP fallback
-                clip_result = None
-                if clip_on:
-                    with st.spinner("Running CLIP fallback…"):
-                        clip_result = run_clip_fallback(uploaded, top_k=CLIP_TOP_K)
-
-                    if clip_result.available and clip_result.suggestions:
+                    # Foundation model candidate breakdown
+                    if ood_result.clip_suggestions:
                         st.markdown(clip_card_header(), unsafe_allow_html=True)
-                        top_clip_pct = clip_result.suggestions[0][1]
-                        for rank, (name, pct) in enumerate(clip_result.suggestions, start=1):
+                        top_clip_pct = ood_result.clip_suggestions[0][1]
+                        for rank, (name, pct) in enumerate(ood_result.clip_suggestions, start=1):
                             bar_w = min(pct / top_clip_pct * 100, 100) if top_clip_pct > 0 else 0
                             st.markdown(
                                 clip_suggestion_row(rank, name, pct, bar_w),
                                 unsafe_allow_html=True,
                             )
                         st.markdown(clip_card_footer(), unsafe_allow_html=True)
-                    else:
-                        st.markdown(
-                            clip_unavailable_notice(clip_result.error or ""),
-                            unsafe_allow_html=True,
-                        )
 
-                # Record as OOD in history
-                st.session_state["history"].append({
-                    "name":   "Unknown Bird Species",
-                    "conf":   ood_result.top_confidence,
-                    "time":   datetime.datetime.now().strftime("%H:%M:%S"),
-                    "is_ood": True,
-                })
+                    # ResNet-18 debug candidates
+                    if ood_result.top5:
+                        st.markdown(ood_debug_header(), unsafe_allow_html=True)
+                        top_pct = ood_result.top5[0][1]
+                        for rank, (name, pct) in enumerate(ood_result.top5, start=1):
+                            bar_w = min(pct / top_pct * 100, 100) if top_pct > 0 else 0
+                            st.markdown(
+                                ood_debug_row(rank, name, pct, bar_w),
+                                unsafe_allow_html=True,
+                            )
+
+                    # Record in history
+                    st.session_state["history"].append({
+                        "name":   f"{ood_result.clip_override_name} (OOD)",
+                        "conf":   ood_result.clip_confidence or ood_result.top_confidence,
+                        "time":   datetime.datetime.now().strftime("%H:%M:%S"),
+                        "is_ood": True,
+                    })
+
+                # 2. General OOD (Softmax below threshold)
+                else:
+                    st.markdown(
+                        ood_card(ood_result.top_confidence, ood_result.threshold_pct),
+                        unsafe_allow_html=True,
+                    )
+
+                    # Top-5 debug rows
+                    if ood_result.top5:
+                        st.markdown(ood_debug_header(), unsafe_allow_html=True)
+                        top_pct = ood_result.top5[0][1]
+                        for rank, (name, pct) in enumerate(ood_result.top5, start=1):
+                            bar_w = min(pct / top_pct * 100, 100) if top_pct > 0 else 0
+                            st.markdown(
+                                ood_debug_row(rank, name, pct, bar_w),
+                                unsafe_allow_html=True,
+                            )
+
+                    # CLIP fallback
+                    clip_result = None
+                    if clip_on:
+                        with st.spinner("Running CLIP fallback…"):
+                            clip_result = run_clip_fallback(uploaded, top_k=CLIP_TOP_K)
+
+                        if clip_result.available and clip_result.suggestions:
+                            st.markdown(clip_card_header(), unsafe_allow_html=True)
+                            top_clip_pct = clip_result.suggestions[0][1]
+                            for rank, (name, pct) in enumerate(clip_result.suggestions, start=1):
+                                bar_w = min(pct / top_clip_pct * 100, 100) if top_clip_pct > 0 else 0
+                                st.markdown(
+                                    clip_suggestion_row(rank, name, pct, bar_w),
+                                    unsafe_allow_html=True,
+                                )
+                            st.markdown(clip_card_footer(), unsafe_allow_html=True)
+                        else:
+                            st.markdown(
+                                clip_unavailable_notice(clip_result.error or ""),
+                                unsafe_allow_html=True,
+                            )
+
+                    # Record as OOD in history
+                    st.session_state["history"].append({
+                        "name":   "Unknown Bird Species",
+                        "conf":   ood_result.top_confidence,
+                        "time":   datetime.datetime.now().strftime("%H:%M:%S"),
+                        "is_ood": True,
+                    })
 
         # ── Grad-CAM (full-width below columns) ───────────────────────────
-        if gradcam_on and not ood_result.is_ood and raw_preds:
+        if gradcam_on and raw_preds:
             try:
                 st.markdown(gradcam_section_header(), unsafe_allow_html=True)
                 top_class_idx = raw_preds[0][0]  # highest-confidence class index
@@ -272,8 +326,13 @@ if page == "classify":
                     )
                 with cam_col2:
                     st.image(overlay, use_container_width=True)
+                    caption_text = (
+                        "Grad-CAM Attention Heatmap"
+                        if not ood_result.is_ood
+                        else f"ResNet-18 Feature Focus (color bias towards {ood_result.top5[0][0]})"
+                    )
                     st.markdown(
-                        gradcam_caption("Grad-CAM Attention Heatmap"),
+                        gradcam_caption(caption_text),
                         unsafe_allow_html=True,
                     )
                 st.markdown(gradcam_section_footer(), unsafe_allow_html=True)
@@ -287,13 +346,12 @@ if page == "classify":
                 )
 
         # ── Species Info (always shown — uses best available name) ────────
-        # For known species: use ResNet top-1 prediction.
-        # For OOD birds: use CLIP top suggestion if available, else ResNet top candidate.
         _species_name_for_info: str | None = None
-        if not ood_result.is_ood and ood_result.top5:
+        if ood_result.clip_override_name:
+            _species_name_for_info = ood_result.clip_override_name
+        elif not ood_result.is_ood and ood_result.top5:
             _species_name_for_info = ood_result.top5[0][0]
         elif ood_result.is_ood:
-            # Try CLIP first
             _clip_res = locals().get("clip_result")
             if (
                 _clip_res is not None
@@ -301,12 +359,54 @@ if page == "classify":
                 and getattr(_clip_res, "suggestions", [])
             ):
                 _species_name_for_info = _clip_res.suggestions[0][0]
+            elif ood_result.clip_suggestions:
+                _species_name_for_info = ood_result.clip_suggestions[0][0]
             elif ood_result.top5:
-                # Fall back to closest ResNet candidate
                 _species_name_for_info = ood_result.top5[0][0]
 
         if _species_name_for_info:
             render_species_info(_species_name_for_info)
+
+            # ── Observation Certificate & Report Export ───────────────
+            st.markdown("<div style='height:14px'></div>", unsafe_allow_html=True)
+            st.markdown(section_label("Observation Certificate & Export"), unsafe_allow_html=True)
+
+            report_top_conf = (
+                ood_result.clip_confidence or ood_result.top_confidence
+                if ood_result.is_ood and ood_result.clip_override_name
+                else (ood_result.top5[0][1] if ood_result.top5 else ood_result.top_confidence)
+            )
+            report_candidates = (
+                ood_result.clip_suggestions
+                if ood_result.is_ood and ood_result.clip_override_name
+                else ood_result.top5
+            )
+            report_md = generate_field_report(
+                species_name=_species_name_for_info,
+                confidence=report_top_conf,
+                is_ood=ood_result.is_ood,
+                clip_override=ood_result.clip_override_name,
+                top_candidates=report_candidates,
+            )
+
+            dl_col1, dl_col2 = st.columns([1.2, 1], gap="medium")
+            ts_slug = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+            with dl_col1:
+                st.download_button(
+                    label="📥 Download Field Certificate (.md)",
+                    data=report_md,
+                    file_name=f"birdvision_certificate_{ts_slug}.md",
+                    mime="text/markdown",
+                    use_container_width=True,
+                )
+            with dl_col2:
+                st.download_button(
+                    label="📄 Export Observation Summary (.txt)",
+                    data=report_md,
+                    file_name=f"birdvision_report_{ts_slug}.txt",
+                    mime="text/plain",
+                    use_container_width=True,
+                )
 
 # ─────────────────────────────────────────────────────────────────────────────
 # 2. ANALYTICS PAGE

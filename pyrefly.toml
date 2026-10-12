@@ -1,0 +1,11 @@
+preset = "off"
+python-interpreter-path = "c:/DS/projects/brids/BirdVisionAI/.venv/Scripts/python.exe"
+search-path = [
+    "c:/DS/projects/brids/BirdVisionAI",
+    "c:/DS/projects/brids/BirdVisionAI/.venv/Lib/site-packages"
+]
+
+[errors]
+missing-import = false
+unbound-name = false
+unknown-name = false

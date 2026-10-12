@@ -87,8 +87,8 @@ def pred_top_card(display_name: str, pct: float) -> str:
   <div class='pred-label'>Best match</div>
   <div class='pred-name'>{display_name}</div>
   <div class='pred-conf'>
-    {pct:.2f}%
-    <span class='pred-conf-unit'> confidence</span>
+    <span>{pct:.2f}%</span>
+    <span class='pred-conf-unit'>confidence</span>
   </div>
   <div class='pred-bar-track'>
     <div style='height:100%;width:{bar_width:.1f}%;background:
@@ -122,18 +122,14 @@ def ood_card(top_confidence: float, threshold_pct: float) -> str:
 
     Uses amber/orange tones so users immediately see it differs from a
     normal (green) classification result.
-
-    Args:
-        top_confidence: Highest softmax probability in percent (0–100).
-        threshold_pct:  The OOD threshold applied, in percent (0–100).
     """
     return f"""
 <div class='ood-card'>
   <div class='ood-badge'>⚠ Out-of-Distribution Detected</div>
   <div class='ood-title'>Unknown Bird Species</div>
   <div class='ood-conf'>
-    {top_confidence:.2f}%
-    <span class='ood-conf-unit'> confidence</span>
+    <span>{top_confidence:.2f}%</span>
+    <span class='ood-conf-unit'>confidence</span>
   </div>
   <div class='ood-explanation'>
     This image does not closely match any of the <strong>200 bird species</strong>
@@ -141,8 +137,36 @@ def ood_card(top_confidence: float, threshold_pct: float) -> str:
     The model's highest confidence was <strong>{top_confidence:.2f}%</strong>, which is
     below the OOD threshold of <strong>{threshold_pct:.0f}%</strong>.
     This typically means the bird is not represented in the training dataset
-    (e.g. Crow, Pigeon, Parrot, Peacock).<br/><br/>
+    (e.g. Peacock, Pigeon, Crow, Owl).<br/><br/>
     <em>Adjust the OOD threshold in the sidebar to tune sensitivity.</em>
+  </div>
+</div>
+"""
+
+
+def ood_override_card(
+    identified_name: str,
+    clip_conf: float,
+    resnet_name: str,
+    resnet_conf: float,
+) -> str:
+    """Card displayed when foundation model cross-verification identifies an OOD species."""
+    bar_width = min(clip_conf, 100)
+    return f"""
+<div class='ood-card ood-card-override'>
+  <div class='ood-badge'>✨ Foundation Model Consensus &middot; OOD Identified</div>
+  <div class='ood-title'>{identified_name}</div>
+  <div class='ood-conf'>
+    <span>{clip_conf:.2f}%</span>
+    <span class='ood-conf-unit'>consensus confidence</span>
+  </div>
+  <div class='ood-explanation'>
+    <strong>Out-of-Distribution Detected:</strong> <em>{identified_name}</em> is not part of the 200 species in the CUB-200 training set.<br/><br/>
+    The CUB-200 specialist classifier (ResNet-18) was biased towards <em>{resnet_name}</em> ({resnet_conf:.1f}%) due to iridescent plumage color patterns, but <strong>OpenCLIP Foundation Model cross-verification</strong> identified the true species as <strong>{identified_name}</strong>.
+  </div>
+  <div class='pred-bar-track'>
+    <div style='height:100%;width:{bar_width:.1f}%;background:
+    linear-gradient(90deg,#0ea5e9,#38bdf8);border-radius:99px'></div>
   </div>
 </div>
 """

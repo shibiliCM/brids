@@ -14,12 +14,13 @@ LABEL maintainer="BirdVision AI Team"
 LABEL description="BirdVision AI v2 — Hybrid Bird Species Recognition System"
 LABEL version="2.0.0"
 
-# System libs required by opencv-python-headless
+# System libs required by opencv-python-headless and healthcheck
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libglib2.0-0 \
     libsm6 \
     libxrender1 \
     libxext6 \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy pre-installed packages from builder
