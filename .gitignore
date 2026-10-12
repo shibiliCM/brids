@@ -1,0 +1,26 @@
+# Python & Virtual Environments
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.venv/
+venv/
+env/
+*.egg-info/
+dist/
+build/
+
+# Jupyter Checkpoints
+.ipynb_checkpoints/
+*/notebooks/*.pth
+
+# IDE & Editor Settings
+.vscode/
+.idea/
+pyrefly.toml
+pyrightconfig.json
+*.log
+
+# OS Metadata
+.DS_Store
+Thumbs.db
